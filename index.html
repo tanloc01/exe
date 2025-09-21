@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tấn Lộc</title>
+  <title>Executor Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -11,6 +11,9 @@
       --accent-b:#2dd4ff;
       --glass-bg:rgba(255,255,255,0.05);
       --glass-border:rgba(255,255,255,0.15);
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
     }
     *{margin:0;padding:0;box-sizing:border-box}
     body {
@@ -178,16 +181,86 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       color: white;
-      padding: 12px 24px;
-      border-radius: 8px;
+      padding: 14px 28px;
+      border-radius: 10px;
       z-index: 10000;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
     }
     .toast.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    .toast.success {
+      background: rgba(16, 185, 129, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .toast.error {
+      background: rgba(239, 68, 68, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .toast.warning {
+      background: rgba(245, 158, 11, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .toast.info {
+      background: rgba(59, 130, 246, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Confirm dialog */
+    .confirm-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      backdrop-filter: blur(5px);
+    }
+    .confirm-content {
+      background: var(--glass-bg);
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      max-width: 350px;
+      text-align: center;
+    }
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    .confirm-buttons button {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .confirm-yes {
+      background: var(--error);
+      color: white;
+    }
+    .confirm-no {
+      background: var(--success);
+      color: white;
     }
   </style>
 </head>
@@ -244,7 +317,18 @@
   </div>
 
   <!-- Toast notification -->
-  <div class="toast" id="copy-toast"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Confirm dialog -->
+  <div class="confirm-dialog" id="confirm-dialog">
+    <div class="confirm-content">
+      <h3 id="confirm-message">Bạn có chắc muốn xóa script này?</h3>
+      <div class="confirm-buttons">
+        <button class="confirm-yes" id="confirm-yes">Có</button>
+        <button class="confirm-no" id="confirm-no">Không</button>
+      </div>
+    </div>
+  </div>
 
   <!-- admin -->
   <button class="admin-btn" onclick="openAdmin()">⚙</button>
@@ -276,16 +360,35 @@
     const API_KEY = "$2a$10$4wv3SZr7FOegcPB2LBHuUObqAHVOVY0Xp/1HxhHP0BWfnXGvslZKa";
     const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     let isAdmin = false;
+    let currentDeleteIndex = null;
 
     // Hàm hiển thị thông báo toast
-    function showToast(message) {
-      const toast = document.getElementById('copy-toast');
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
       toast.textContent = message;
+      toast.className = 'toast ' + type;
       toast.classList.add('show');
       
       setTimeout(() => {
         toast.classList.remove('show');
       }, 3000);
+    }
+
+    // Hàm hiển thị dialog xác nhận
+    function showConfirm(message, callback) {
+      const dialog = document.getElementById('confirm-dialog');
+      document.getElementById('confirm-message').textContent = message;
+      dialog.style.display = 'flex';
+      
+      document.getElementById('confirm-yes').onclick = function() {
+        dialog.style.display = 'none';
+        callback(true);
+      };
+      
+      document.getElementById('confirm-no').onclick = function() {
+        dialog.style.display = 'none';
+        callback(false);
+      };
     }
 
     async function fetchData(){
@@ -295,6 +398,7 @@
         return data.record || {};
       } catch (e) {
         console.error("Error fetching data:", e);
+        showToast("❌ Lỗi kết nối khi tải dữ liệu", "error");
         return {};
       }
     }
@@ -309,16 +413,21 @@
           },
           body: JSON.stringify(record)
         });
+        return true;
       } catch (e) {
         console.error("Error saving data:", e);
-        alert("Lưu thất bại, kiểm tra kết nối.");
+        showToast("❌ Lỗi khi lưu dữ liệu", "error");
+        return false;
       }
     }
 
     function openPopup(id){document.getElementById(id).style.display="flex";}
     function closeOverlay(e,id){if(e.target.classList.contains('overlay')){document.getElementById(id).style.display="none";}}
 
-    function openAdmin(){let p=document.getElementById("admin-panel");p.style.display=p.style.display==="flex"?"none":"flex";}
+    function openAdmin(){
+      let p=document.getElementById("admin-panel");
+      p.style.display=p.style.display==="flex"?"none":"flex";
+    }
     
     function checkPass(){
       if(document.getElementById("admin-pass").value==="2010"){
@@ -327,8 +436,9 @@
         document.querySelector("#admin-panel button").style.display="none";
         document.getElementById("admin-content").style.display="block";
         loadData();
+        showToast("✅ Đăng nhập admin thành công", "success");
       } else {
-        alert("Sai mật khẩu!");
+        showToast("❌ Sai mật khẩu!", "error");
       }
     }
 
@@ -344,38 +454,52 @@
         krnl_global: document.getElementById("link-krnl-global").value,
         krnl_vng: document.getElementById("link-krnl-vng").value,
       };
-      await saveData(r);
-      loadData();
-      alert("Đã lưu link!");
+      const success = await saveData(r);
+      if (success) {
+        loadData();
+        showToast("✅ Đã lưu link thành công", "success");
+      }
     }
 
     async function addScript(){
       let name=document.getElementById("script-name").value.trim();
       let desc=document.getElementById("script-desc").value.trim();
       let code=document.getElementById("script-code").value;
-      if(!name||!code){alert("Điền đủ thông tin!");return;}
+      if(!name||!code){
+        showToast("⚠️ Vui lòng điền đủ thông tin!", "warning");
+        return;
+      }
+      
       let r=await fetchData();
       if(!r.scripts) r.scripts = [];
       r.scripts.push({name,desc,code});
-      await saveData(r);
-      loadData();
-      alert("Đã thêm script!");
       
-      // Clear form
-      document.getElementById("script-name").value = "";
-      document.getElementById("script-desc").value = "";
-      document.getElementById("script-code").value = "";
+      const success = await saveData(r);
+      if (success) {
+        loadData();
+        showToast("✅ Đã thêm script thành công", "success");
+        
+        // Clear form
+        document.getElementById("script-name").value = "";
+        document.getElementById("script-desc").value = "";
+        document.getElementById("script-code").value = "";
+      }
     }
 
     async function deleteScript(index){
-      if(!confirm("Bạn có chắc muốn xóa script này?")) return;
-      let r = await fetchData();
-      if(r.scripts && r.scripts.length > index){
-        r.scripts.splice(index,1);
-        await saveData(r);
-        loadData();
-        alert("Đã xóa script!");
-      }
+      showConfirm("Bạn có chắc muốn xóa script này?", async function(confirmed) {
+        if (!confirmed) return;
+        
+        let r = await fetchData();
+        if(r.scripts && r.scripts.length > index){
+          r.scripts.splice(index,1);
+          const success = await saveData(r);
+          if (success) {
+            loadData();
+            showToast("✅ Đã xóa script thành công", "success");
+          }
+        }
+      });
     }
 
     function escapeHtml(str) {
@@ -413,11 +537,10 @@
         let copyBtn=card.querySelector(".copy-btn");
         copyBtn.onclick=function(){
           navigator.clipboard.writeText(s.code||"").then(() => {
-            // Thay đổi thông báo tại đây
-            showToast("✅ Script đã được sao chép vào clipboard!");
+            showToast("✅ Script đã được sao chép vào clipboard!", "success");
           }).catch(err => {
             console.error("Copy failed:", err);
-            showToast("❌ Sao chép thất bại. Hãy thử thủ công.");
+            showToast("❌ Sao chép thất bại. Hãy thử thủ công.", "error");
           });
         };
         
