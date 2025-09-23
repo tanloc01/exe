@@ -27,16 +27,12 @@
       padding: 28px;
     }
     .container {width:100%;max-width:860px;z-index:1;display:flex;flex-direction:column;gap:24px;}
-
-    /* avatar */
     .avatar {display:flex;justify-content:center}
     .avatar img {
       width:90px;height:90px;border-radius:50%;
       border:3px solid rgba(255,255,255,0.25);
       box-shadow:0 6px 20px rgba(0,0,0,0.5);
     }
-
-    /* panel */
     .panel {
       padding:22px;
       border-radius:18px;
@@ -55,8 +51,6 @@
       font-size:19px;
       letter-spacing:.5px;
     }
-
-    /* exec buttons - CHỈNH SỬA THÀNH DỌC */
     .exec-list {
       display: flex;
       flex-direction: column;
@@ -81,7 +75,6 @@
     .ronix {background:linear-gradient(135deg,#0ea5e9,#7c3aed)}
     .krnl  {background:linear-gradient(135deg,#1e293b,#0ea5e9)}
 
-    /* popup overlay */
     .overlay {
       position: fixed;
       inset: 0;
@@ -108,7 +101,6 @@
     @keyframes scaleIn {from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
     .popup h3 {font-size: 16px; color: #fff;}
 
-    /* scripts */
     .scripts {display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
     .script-card {
       background:var(--glass-bg);
@@ -139,8 +131,6 @@
     }
     .copy-btn:hover {transform:scale(1.05)}
     .delete-btn {background:#ef4444;color:#fff;}
-
-    /* admin */
     .admin-btn {
       position: fixed;bottom: 22px;right: 22px;
       background: linear-gradient(135deg,#6f2bdc,#2dd4ff);
@@ -174,8 +164,6 @@
       background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
       font-weight:600;color:#031220;cursor:pointer;
     }
-    
-    /* Toast notification */
     .toast {
       position: fixed;
       bottom: 20px;
@@ -267,8 +255,6 @@
 <body>
   <div class="container">
     <div class="avatar"><img src="https://i.pinimg.com/originals/82/9b/74/829b74c0e393c4c47907f2dfffc64fc2.gif" alt="Avatar"></div>
-
-    <!-- clients -->
     <div class="panel">
       <div class="title">Executor</div>
       <div class="exec-list">
@@ -279,14 +265,11 @@
       </div>
     </div>
 
-    <!-- scripts -->
     <div class="panel">
       <div class="title">SCRIPTS</div>
       <div class="scripts" id="script-list"></div>
     </div>
   </div>
-
-  <!-- popups -->
   <div class="overlay" id="delta-popup" onclick="closeOverlay(event,'delta-popup')">
     <div class="popup">
       <h3>Delta</h3>
@@ -315,11 +298,7 @@
       <a id="krnl-vng" href="#" class="exec-btn krnl" download>KRNL VNG</a>
     </div>
   </div>
-
-  <!-- Toast notification -->
   <div class="toast" id="toast"></div>
-
-  <!-- Confirm dialog -->
   <div class="confirm-dialog" id="confirm-dialog">
     <div class="confirm-content">
       <h3 id="confirm-message">Bạn có chắc muốn xóa script này?</h3>
@@ -329,8 +308,6 @@
       </div>
     </div>
   </div>
-
-  <!-- admin -->
   <button class="admin-btn" onclick="openAdmin()">⚙</button>
   <div class="admin-panel" id="admin-panel">
     <input type="password" id="admin-pass" placeholder="Nhập mật khẩu">
@@ -373,8 +350,6 @@
         toast.classList.remove('show');
       }, 3000);
     }
-
-    // Hàm hiển thị dialog xác nhận
     function showConfirm(message, callback) {
       const dialog = document.getElementById('confirm-dialog');
       document.getElementById('confirm-message').textContent = message;
@@ -398,7 +373,7 @@
         return data.record || {};
       } catch (e) {
         console.error("Error fetching data:", e);
-        showToast("❌ Lỗi kết nối khi tải dữ liệu", "error");
+        showToast("", "error");
         return {};
       }
     }
@@ -416,7 +391,7 @@
         return true;
       } catch (e) {
         console.error("Error saving data:", e);
-        showToast("❌ Lỗi khi lưu dữ liệu", "error");
+        showToast("", "error");
         return false;
       }
     }
@@ -436,9 +411,9 @@
         document.querySelector("#admin-panel button").style.display="none";
         document.getElementById("admin-content").style.display="block";
         loadData();
-        showToast("✅ Đăng nhập admin thành công", "success");
+        showToast("", "success");
       } else {
-        showToast("❌ Sai mật khẩu!", "error");
+        showToast("", "error");
       }
     }
 
@@ -457,7 +432,7 @@
       const success = await saveData(r);
       if (success) {
         loadData();
-        showToast("✅ Đã lưu link thành công", "success");
+        showToast("", "success");
       }
     }
 
@@ -466,7 +441,7 @@
       let desc=document.getElementById("script-desc").value.trim();
       let code=document.getElementById("script-code").value;
       if(!name||!code){
-        showToast("⚠️ Vui lòng điền đủ thông tin!", "warning");
+        showToast("", "warning");
         return;
       }
       
@@ -477,9 +452,7 @@
       const success = await saveData(r);
       if (success) {
         loadData();
-        showToast("✅ Đã thêm script thành công", "success");
-        
-        // Clear form
+        showToast("", "success");
         document.getElementById("script-name").value = "";
         document.getElementById("script-desc").value = "";
         document.getElementById("script-code").value = "";
@@ -496,7 +469,7 @@
           const success = await saveData(r);
           if (success) {
             loadData();
-            showToast("✅ Đã xóa script thành công", "success");
+            showToast("", "success");
           }
         }
       });
@@ -537,10 +510,10 @@
         let copyBtn=card.querySelector(".copy-btn");
         copyBtn.onclick=function(){
           navigator.clipboard.writeText(s.code||"").then(() => {
-            showToast("✅ Script đã được sao chép vào clipboard!", "success");
+            showToast("", "success");
           }).catch(err => {
             console.error("Copy failed:", err);
-            showToast("❌ Sao chép thất bại. Hãy thử thủ công.", "error");
+            showToast("", "error");
           });
         };
         
@@ -555,8 +528,6 @@
 
     async function loadData(){
       let r = await fetchData();
-      
-      // Update links
       if(r.links){
         document.getElementById("delta-global").href=r.links.delta_global||"#";
         document.getElementById("delta-vng").href=r.links.delta_vng||"#";
@@ -566,8 +537,6 @@
         document.getElementById("ronix-vng").href=r.links.ronix_vng||"#";
         document.getElementById("krnl-global").href=r.links.krnl_global||"#";
         document.getElementById("krnl-vng").href=r.links.krnl_vng||"#";
-        
-        // Prefill admin inputs if admin
         if(isAdmin){
           document.getElementById("link-delta-global").value = r.links.delta_global || "";
           document.getElementById("link-delta-vng").value = r.links.delta_vng || "";
@@ -580,7 +549,6 @@
         }
       }
       
-      // Render scripts
       if(r.scripts){
         renderScripts(r.scripts);
       } else {
