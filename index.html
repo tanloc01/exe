@@ -4,202 +4,494 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TanLoc</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent-a:#6f2bdc;
-      --accent-b:#2dd4ff;
-      --glass-bg:rgba(255,255,255,0.05);
-      --glass-border:rgba(255,255,255,0.15);
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --primary-light: #a78bfa;
+      --secondary: #06b6d4;
+      --secondary-dark: #0891b2;
+      --accent: #f59e0b;
+      --accent-alt: #10b981;
+      --dark: #0f172a;
+      --darker: #0a0f1c;
+      --light: #f8fafc;
+      --glass-bg: rgba(15, 23, 42, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-highlight: rgba(255, 255, 255, 0.05);
       --success: #10b981;
       --error: #ef4444;
       --warning: #f59e0b;
+      --info: #3b82f6;
     }
-    *{margin:0;padding:0;box-sizing:border-box}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Poppins, system-ui, sans-serif;
-      background: url("https://i.pinimg.com/originals/a6/c5/dc/a6c5dc5ff0620933cf6a7e76fec0e0b2.jpg") no-repeat center center fixed;
+      font-family: 'Poppins', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--darker), var(--dark)), 
+                  url("https://i.pinimg.com/originals/a6/c5/dc/a6c5dc5ff0620933cf6a7e76fec0e0b2.jpg") no-repeat center center fixed;
       background-size: cover;
-      color: #eaf6ff;
+      background-blend-mode: overlay;
+      color: var(--light);
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
       padding: 28px;
+      position: relative;
+      overflow-x: hidden;
     }
-    .container {width:100%;max-width:860px;z-index:1;display:flex;flex-direction:column;gap:24px;}
-    .avatar {display:flex;justify-content:center}
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 900px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    
+    .avatar {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .avatar::before {
+      content: '';
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      z-index: -1;
+      filter: blur(15px);
+      opacity: 0.6;
+      animation: pulse 4s infinite ease-in-out;
+    }
+    
     .avatar img {
-      width:90px;height:90px;border-radius:50%;
-      border:3px solid rgba(255,255,255,0.25);
-      box-shadow:0 6px 20px rgba(0,0,0,0.5);
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
     }
+    
+    .avatar img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    }
+    
     .panel {
-      padding:22px;
-      border-radius:18px;
-      background:var(--glass-bg);
-      backdrop-filter: blur(16px);
-      border:1px solid var(--glass-border);
-      box-shadow:0 8px 28px rgba(0,0,0,0.6),0 0 20px rgba(111,43,220,0.35);
-      animation: fadeIn .5s ease;
+      padding: 24px;
+      border-radius: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: fadeIn 0.5s ease;
+      position: relative;
+      overflow: hidden;
     }
-    @keyframes fadeIn {from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+    
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+    
     .title {
-      text-align:center;
-      font-weight:700;
-      margin-bottom:18px;
-      color:#dce9f9;
-      font-size:19px;
-      letter-spacing:.5px;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--light);
+      font-size: 22px;
+      letter-spacing: 0.5px;
+      position: relative;
+      display: inline-block;
+      width: 100%;
     }
+    
+    .title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 3px;
+    }
+    
     .exec-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
+    
     .exec-btn {
-      padding: 16px;
+      padding: 16px 20px;
       border-radius: 14px;
-      font-weight: 700;
-      font-size: 15px;
+      font-weight: 600;
+      font-size: 16px;
       text-align: center;
-      color: #fff;
+      color: var(--light);
       text-decoration: none;
-      transition: all .3s ease;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
       display: block;
       width: 100%;
+      position: relative;
+      overflow: hidden;
+      border: none;
+      cursor: pointer;
     }
-    .exec-btn:hover {transform: translateY(-4px) scale(1.02);}
-    .delta {background:linear-gradient(135deg,#3b82f6,#6f2bdc)}
-    .codex {background:linear-gradient(135deg,#7c3aed,#22d3ee)}
-    .ronix {background:linear-gradient(135deg,#0ea5e9,#7c3aed)}
-    .krnl  {background:linear-gradient(135deg,#1e293b,#0ea5e9)}
-
+    
+    .exec-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .exec-btn:hover::before {
+      left: 100%;
+    }
+    
+    .exec-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .exec-btn:active {
+      transform: translateY(-2px);
+    }
+    
+    .delta {
+      background: linear-gradient(135deg, #6366f1, var(--primary));
+    }
+    
+    .codex {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    
+    .ronix {
+      background: linear-gradient(135deg, var(--secondary), #0ea5e9);
+    }
+    
+    .krnl {
+      background: linear-gradient(135deg, #1e293b, var(--primary-dark));
+    }
+    
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0, 0, 0, 0.7);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      backdrop-filter: blur(8px);
     }
+    
     .popup {
       background: var(--glass-bg);
-      padding: 22px;
-      border-radius: 16px;
-      backdrop-filter: blur(18px);
-      border:2px solid #3b82f6;   /* viền xanh */
-      box-shadow: 0 0 15px rgba(59,130,246,0.7), 0 8px 25px rgba(0,0,0,0.7);
+      padding: 24px;
+      border-radius: 18px;
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+                  0 0 25px rgba(139, 92, 246, 0.4);
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      min-width: 280px;
+      gap: 16px;
+      min-width: 300px;
       text-align: center;
-      animation: scaleIn .35s ease;
+      animation: scaleIn 0.35s ease;
+      position: relative;
     }
-    @keyframes scaleIn {from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-    .popup h3 {font-size: 16px; color: #fff;}
-
-    .scripts {display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+    
+    .popup::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 18px 18px 0 0;
+    }
+    
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .popup h3 {
+      font-size: 18px;
+      color: var(--light);
+      font-weight: 600;
+    }
+    
+    .scripts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+    
     .script-card {
-      background:var(--glass-bg);
-      border:1px solid var(--glass-border);
-      border-radius:14px;
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      box-shadow:0 6px 18px rgba(0,0,0,0.35);
-      transition: transform .25s ease,box-shadow .25s ease;
-    }
-    .script-card:hover {transform: translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,0.45);}
-    .script-title {font-weight:600;font-size:15px;color:#fff}
-    .script-desc {font-size:12px;color:#b7c7da}
-    .btn-row {display:flex;gap:10px;}
-    .copy-btn {
-      flex:1;
-      padding:10px 14px;
-      border:0;
-      border-radius:8px;
-      cursor:pointer;
-      background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
-      font-weight:600;
-      font-size:14px;
-      color:#031220;
-      transition:all .3s ease;
-    }
-    .copy-btn:hover {transform:scale(1.05)}
-    .delete-btn {background:#ef4444;color:#fff;}
-    .admin-btn {
-      position: fixed;bottom: 22px;right: 22px;
-      background: linear-gradient(135deg,#6f2bdc,#2dd4ff);
-      color: #031220;font-weight: 700;font-size: 18px;
-      border: 0;border-radius: 50%;width: 58px;height: 58px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-      cursor: pointer;z-index: 9999;
-      display:flex;align-items:center;justify-content:center;
-      transition:.3s ease;
-    }
-    .admin-btn:hover {transform: scale(1.1);}
-    .admin-panel {
-      position: fixed;bottom: 90px;right: 24px;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;padding: 18px;
-      display: none;flex-direction: column;gap: 14px;
-      width: 300px;max-height: 70vh;overflow-y: auto;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .script-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    }
+    
+    .script-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+    
+    .script-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--light);
+    }
+    
+    .script-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+    
+    .copy-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--light);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .delete-btn {
+      background: var(--error);
+      color: var(--light);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .delete-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+    }
+    
+    .admin-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--light);
+      font-weight: 700;
+      font-size: 20px;
+      border: 0;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+    }
+    
+    .admin-btn:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+    }
+    
+    .admin-panel {
+      position: fixed;
+      bottom: 95px;
+      right: 25px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      width: 320px;
+      max-height: 70vh;
+      overflow-y: auto;
       z-index: 9998;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
     }
-    .admin-panel input,.admin-panel textarea {
-      width:100%;padding:8px;
-      border-radius:6px;border:1px solid rgba(255,255,255,0.2);
-      background:#11182b;color:#fff;font-size:13px;
+    
+    .admin-panel input, .admin-panel textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--light);
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
-    .admin-panel h4{color:#9cc7ff;font-size:14px;font-weight:600}
-    .admin-panel button{
-      padding:10px;border-radius:8px;border:0;
-      background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
-      font-weight:600;color:#031220;cursor:pointer;
+    
+    .admin-panel input:focus, .admin-panel textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
     }
+    
+    .admin-panel h4 {
+      color: var(--primary-light);
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    
+    .admin-panel button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      font-weight: 600;
+      color: var(--light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .admin-panel button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
     .toast {
       position: fixed;
-      bottom: 20px;
+      bottom: 25px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(15, 23, 42, 0.9);
       color: white;
       padding: 14px 28px;
-      border-radius: 10px;
+      border-radius: 12px;
       z-index: 10000;
       opacity: 0;
       transition: opacity 0.3s ease, transform 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       gap: 10px;
       font-weight: 500;
+      max-width: 90%;
     }
+    
     .toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(-10px);
     }
+    
     .toast.success {
       background: rgba(16, 185, 129, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+    
     .toast.error {
       background: rgba(239, 68, 68, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+    
     .toast.warning {
       background: rgba(245, 158, 11, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+    
     .toast.info {
       background: rgba(59, 130, 246, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -217,44 +509,99 @@
       align-items: center;
       justify-content: center;
       z-index: 10001;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
+    
     .confirm-content {
       background: var(--glass-bg);
-      padding: 24px;
-      border-radius: 16px;
-      backdrop-filter: blur(16px);
+      padding: 28px;
+      border-radius: 18px;
+      backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      max-width: 350px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      max-width: 380px;
       text-align: center;
     }
+    
     .confirm-buttons {
       display: flex;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 22px;
       justify-content: center;
     }
+    
     .confirm-buttons button {
-      padding: 8px 20px;
-      border-radius: 8px;
+      padding: 10px 22px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.3s ease;
     }
+    
     .confirm-yes {
       background: var(--error);
       color: white;
     }
+    
+    .confirm-yes:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+    }
+    
     .confirm-no {
       background: var(--success);
       color: white;
+    }
+    
+    .confirm-no:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        gap: 20px;
+      }
+      
+      .panel {
+        padding: 18px;
+      }
+      
+      .scripts {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+      }
+      
+      .admin-panel {
+        width: calc(100vw - 40px);
+        right: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 20px;
+      }
+      
+      .scripts {
+        grid-template-columns: 1fr;
+      }
+      
+      .exec-btn {
+        padding: 14px 16px;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="avatar"><img src="https://i.pinimg.com/originals/82/9b/74/829b74c0e393c4c47907f2dfffc64fc2.gif" alt="Avatar"></div>
+    <div class="avatar">
+      <img src="https://i.pinimg.com/originals/82/9b/74/829b74c0e393c4c47907f2dfffc64fc2.gif" alt="Avatar">
+    </div>
+    
     <div class="panel">
       <div class="title">Executor</div>
       <div class="exec-list">
@@ -270,6 +617,8 @@
       <div class="scripts" id="script-list"></div>
     </div>
   </div>
+  
+  <!-- Popups -->
   <div class="overlay" id="delta-popup" onclick="closeOverlay(event,'delta-popup')">
     <div class="popup">
       <h3>Delta</h3>
@@ -277,6 +626,7 @@
       <a id="delta-vng" href="#" class="exec-btn delta" download>Delta VNG</a>
     </div>
   </div>
+  
   <div class="overlay" id="codex-popup" onclick="closeOverlay(event,'codex-popup')">
     <div class="popup">
       <h3>Codex</h3>
@@ -284,6 +634,7 @@
       <a id="codex-vng" href="#" class="exec-btn codex" download>Codex VNG</a>
     </div>
   </div>
+  
   <div class="overlay" id="ronix-popup" onclick="closeOverlay(event,'ronix-popup')">
     <div class="popup">
       <h3>Ronix</h3>
@@ -291,6 +642,7 @@
       <a id="ronix-vng" href="#" class="exec-btn ronix" download>Ronix VNG</a>
     </div>
   </div>
+  
   <div class="overlay" id="krnl-popup" onclick="closeOverlay(event,'krnl-popup')">
     <div class="popup">
       <h3>KRNL</h3>
@@ -298,7 +650,10 @@
       <a id="krnl-vng" href="#" class="exec-btn krnl" download>KRNL VNG</a>
     </div>
   </div>
+  
+  <!-- Toast and Confirm -->
   <div class="toast" id="toast"></div>
+  
   <div class="confirm-dialog" id="confirm-dialog">
     <div class="confirm-content">
       <h3 id="confirm-message">Bạn có chắc muốn xóa script này?</h3>
@@ -308,7 +663,10 @@
       </div>
     </div>
   </div>
+  
+  <!-- Admin Panel -->
   <button class="admin-btn" onclick="openAdmin()">⚙</button>
+  
   <div class="admin-panel" id="admin-panel">
     <input type="password" id="admin-pass" placeholder="Nhập mật khẩu">
     <button onclick="checkPass()">Login</button>
@@ -350,6 +708,7 @@
         toast.classList.remove('show');
       }, 3000);
     }
+    
     function showConfirm(message, callback) {
       const dialog = document.getElementById('confirm-dialog');
       document.getElementById('confirm-message').textContent = message;
@@ -373,7 +732,7 @@
         return data.record || {};
       } catch (e) {
         console.error("Error fetching data:", e);
-        showToast("", "error");
+        showToast("Lỗi khi tải dữ liệu", "error");
         return {};
       }
     }
@@ -391,29 +750,36 @@
         return true;
       } catch (e) {
         console.error("Error saving data:", e);
-        showToast("", "error");
+        showToast("Lỗi khi lưu dữ liệu", "error");
         return false;
       }
     }
 
-    function openPopup(id){document.getElementById(id).style.display="flex";}
-    function closeOverlay(e,id){if(e.target.classList.contains('overlay')){document.getElementById(id).style.display="none";}}
+    function openPopup(id){
+      document.getElementById(id).style.display = "flex";
+    }
+    
+    function closeOverlay(e, id){
+      if(e.target.classList.contains('overlay')){
+        document.getElementById(id).style.display = "none";
+      }
+    }
 
     function openAdmin(){
-      let p=document.getElementById("admin-panel");
-      p.style.display=p.style.display==="flex"?"none":"flex";
+      let p = document.getElementById("admin-panel");
+      p.style.display = p.style.display === "flex" ? "none" : "flex";
     }
     
     function checkPass(){
-      if(document.getElementById("admin-pass").value==="1153021372365275216"){
+      if(document.getElementById("admin-pass").value === "1153021372365275216"){
         isAdmin = true;
-        document.getElementById("admin-pass").style.display="none";
-        document.querySelector("#admin-panel button").style.display="none";
-        document.getElementById("admin-content").style.display="block";
+        document.getElementById("admin-pass").style.display = "none";
+        document.querySelector("#admin-panel button").style.display = "none";
+        document.getElementById("admin-content").style.display = "block";
         loadData();
-        showToast("", "success");
+        showToast("Đăng nhập admin thành công", "success");
       } else {
-        showToast("", "error");
+        showToast("Mật khẩu không đúng", "error");
       }
     }
 
@@ -432,27 +798,27 @@
       const success = await saveData(r);
       if (success) {
         loadData();
-        showToast("", "success");
+        showToast("Đã cập nhật link thành công", "success");
       }
     }
 
     async function addScript(){
-      let name=document.getElementById("script-name").value.trim();
-      let desc=document.getElementById("script-desc").value.trim();
-      let code=document.getElementById("script-code").value;
-      if(!name||!code){
-        showToast("", "warning");
+      let name = document.getElementById("script-name").value.trim();
+      let desc = document.getElementById("script-desc").value.trim();
+      let code = document.getElementById("script-code").value;
+      if(!name || !code){
+        showToast("Vui lòng nhập tên và code script", "warning");
         return;
       }
       
-      let r=await fetchData();
+      let r = await fetchData();
       if(!r.scripts) r.scripts = [];
-      r.scripts.push({name,desc,code});
+      r.scripts.push({name, desc, code});
       
       const success = await saveData(r);
       if (success) {
         loadData();
-        showToast("", "success");
+        showToast("Đã thêm script thành công", "success");
         document.getElementById("script-name").value = "";
         document.getElementById("script-desc").value = "";
         document.getElementById("script-code").value = "";
@@ -465,11 +831,11 @@
         
         let r = await fetchData();
         if(r.scripts && r.scripts.length > index){
-          r.scripts.splice(index,1);
+          r.scripts.splice(index, 1);
           const success = await saveData(r);
           if (success) {
             loadData();
-            showToast("", "success");
+            showToast("Đã xóa script thành công", "success");
           }
         }
       });
@@ -488,38 +854,38 @@
     }
 
     function renderScripts(scripts){
-      let list=document.getElementById("script-list");
-      list.innerHTML="";
+      let list = document.getElementById("script-list");
+      list.innerHTML = "";
       
       if (!scripts || scripts.length === 0) {
         list.innerHTML = '<div class="script-card"><div class="script-desc" style="text-align:center">Chưa có script nào. Đăng nhập admin để thêm script.</div></div>';
         return;
       }
       
-      scripts.forEach((s,i)=>{
-        let card=document.createElement("div");
-        card.className="script-card";
-        card.innerHTML=`
+      scripts.forEach((s, i) => {
+        let card = document.createElement("div");
+        card.className = "script-card";
+        card.innerHTML = `
           <div class="script-title">${escapeHtml(s.name)}</div>
-          <div class="script-desc">${escapeHtml(s.desc||"Không có mô tả")}</div>
+          <div class="script-desc">${escapeHtml(s.desc || "Không có mô tả")}</div>
           <div class="btn-row">
             <button class="copy-btn">Copy</button>
-            ${isAdmin?'<button class="delete-btn">Xóa</button>':""}
+            ${isAdmin ? '<button class="delete-btn">Xóa</button>' : ""}
           </div>`;
         
-        let copyBtn=card.querySelector(".copy-btn");
-        copyBtn.onclick=function(){
-          navigator.clipboard.writeText(s.code||"").then(() => {
-            showToast("", "success");
+        let copyBtn = card.querySelector(".copy-btn");
+        copyBtn.onclick = function(){
+          navigator.clipboard.writeText(s.code || "").then(() => {
+            showToast("Đã sao chép script", "success");
           }).catch(err => {
             console.error("Copy failed:", err);
-            showToast("", "error");
+            showToast("Lỗi khi sao chép", "error");
           });
         };
         
         if(isAdmin){
-          let delBtn=card.querySelector(".delete-btn");
-          delBtn.onclick=function(){deleteScript(i)};
+          let delBtn = card.querySelector(".delete-btn");
+          delBtn.onclick = function(){ deleteScript(i) };
         }
         
         list.appendChild(card);
@@ -529,14 +895,14 @@
     async function loadData(){
       let r = await fetchData();
       if(r.links){
-        document.getElementById("delta-global").href=r.links.delta_global||"#";
-        document.getElementById("delta-vng").href=r.links.delta_vng||"#";
-        document.getElementById("codex-global").href=r.links.codex_global||"#";
-        document.getElementById("codex-vng").href=r.links.codex_vng||"#";
-        document.getElementById("ronix-global").href=r.links.ronix_global||"#";
-        document.getElementById("ronix-vng").href=r.links.ronix_vng||"#";
-        document.getElementById("krnl-global").href=r.links.krnl_global||"#";
-        document.getElementById("krnl-vng").href=r.links.krnl_vng||"#";
+        document.getElementById("delta-global").href = r.links.delta_global || "#";
+        document.getElementById("delta-vng").href = r.links.delta_vng || "#";
+        document.getElementById("codex-global").href = r.links.codex_global || "#";
+        document.getElementById("codex-vng").href = r.links.codex_vng || "#";
+        document.getElementById("ronix-global").href = r.links.ronix_global || "#";
+        document.getElementById("ronix-vng").href = r.links.ronix_vng || "#";
+        document.getElementById("krnl-global").href = r.links.krnl_global || "#";
+        document.getElementById("krnl-vng").href = r.links.krnl_vng || "#";
         if(isAdmin){
           document.getElementById("link-delta-global").value = r.links.delta_global || "";
           document.getElementById("link-delta-vng").value = r.links.delta_vng || "";
@@ -558,6 +924,18 @@
     
     // Initialize
     loadData();
+    
+    // Close admin panel when clicking outside
+    document.addEventListener('click', function(event) {
+      const adminPanel = document.getElementById('admin-panel');
+      const adminBtn = document.querySelector('.admin-btn');
+      
+      if (adminPanel.style.display === 'flex' && 
+          !adminPanel.contains(event.target) && 
+          !adminBtn.contains(event.target)) {
+        adminPanel.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
